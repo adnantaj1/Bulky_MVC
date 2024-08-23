@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace BulkyWeb.Views.Shared
+namespace BulkyBook.Views.Shared
 {
     public class _NotificationModel : PageModel
     {
