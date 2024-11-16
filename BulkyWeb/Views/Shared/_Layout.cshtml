@@ -51,24 +51,12 @@
                                 </ul>
                             </li>
                         }
-                        @if (HttpContextAccessor.HttpContext.Session.GetInt32(SD.SessionCart) != null)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="Customer" asp-controller="Cart" asp-action="Index">
-                                    <i class="bi bi-cart"></i> &nbsp;
-                                    (@HttpContextAccessor.HttpContext.Session.GetInt32(SD.SessionCart))
-                                </a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="Customer" asp-controller="Cart" asp-action="Index">
-                                    <i class="bi bi-cart"></i> &nbsp;
-                                    (0)
-                                </a>
-                            </li>
-                        }
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Customer" asp-controller="Cart" asp-action="Index">
+                                @await Component.InvokeAsync("ShoppingCart")
+                            </a>
+                        </li>
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -83,7 +71,7 @@
     </div>
 
     <footer class="border-top footer bg-primary text-muted">
-        <div class="text-center" >
+        <div class="text-center">
             Made with <i class="bi bi-heart-fill"></i> by Learner
         </div>
     </footer>
