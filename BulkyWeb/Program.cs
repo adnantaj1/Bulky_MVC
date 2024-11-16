@@ -27,6 +27,15 @@ internal class Program
 			options.LogoutPath = $"/identity/Account/Logout";
 			options.AccessDeniedPath = $"/identity/Account/AccessDenied";
 		});
+
+		builder.Services.AddDistributedMemoryCache();
+		builder.Services.AddSession(options =>
+		{
+			options.IdleTimeout = TimeSpan.FromMinutes(100);
+			options.Cookie.HttpOnly = true;
+			options.Cookie.IsEssential = true;
+		});
+
 		builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 		builder.Services.AddScoped<IEmailSender, EmailSender>();
 		builder.Services.AddRazorPages();
@@ -49,6 +58,7 @@ internal class Program
 
 		app.UseAuthentication();
 		app.UseAuthorization();
+		app.UseSession();
 		app.MapRazorPages();
 
 		app.MapControllerRoute(
