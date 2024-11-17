@@ -28,6 +28,12 @@ internal class Program
 			options.AccessDeniedPath = $"/identity/Account/AccessDenied";
 		});
 
+		builder.Services.AddAuthentication().AddFacebook(options =>
+		{
+			options.AppId = "1350148716359419";
+			options.AppSecret = "b4c672fae07f1b9e28de238e77ad3ecd";
+		});
+
 		builder.Services.AddDistributedMemoryCache();
 		builder.Services.AddSession(options =>
 		{
