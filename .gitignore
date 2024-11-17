@@ -52,6 +52,7 @@ nunit-*.xml
 
 # appSettings.json
 BulkyBookWeb/appsettings.json
+BulkyBookWeb/appsettings.Development.json
 
 # Build Results of an ATL Project
 [Dd]ebugPS/
