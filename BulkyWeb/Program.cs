@@ -19,7 +19,7 @@ internal class Program
 		builder.Services.AddDbContext<ApplicationDbContext>(options =>
 			options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-		builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+		//builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 
 		builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 		builder.Services.ConfigureApplicationCookie(options =>
@@ -29,12 +29,12 @@ internal class Program
 			options.AccessDeniedPath = $"/identity/Account/AccessDenied";
 		});
 
-        builder.Services.AddAuthentication().AddFacebook(options =>
+       /* builder.Services.AddAuthentication().AddFacebook(options =>
         {
             IConfiguration configuration = builder.Configuration;
             options.AppId = configuration["Authentication:Facebook:AppId"];
             options.AppSecret = configuration["Authentication:Facebook:AppSecret"];
-        });
+        });*/
 
 
         builder.Services.AddDistributedMemoryCache();
@@ -78,13 +78,22 @@ internal class Program
 
 		app.Run();
 
-		void SeedDatabase()
-		{
-			using (var scope = app.Services.CreateScope())
-			{
-				var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
-				dbInitializer.Initialize();
-			}
-		}
-	}
+        void SeedDatabase()
+        {
+            using (var scope = app.Services.CreateScope())
+            {
+                try
+                {
+                    var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+                    dbInitializer.Initialize();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Database Initialization Error: {ex.Message}");
+                    throw;
+                }
+            }
+        }
+
+    }
 }
