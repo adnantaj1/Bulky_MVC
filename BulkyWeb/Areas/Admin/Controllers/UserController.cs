@@ -2,6 +2,7 @@
 using BulkyBook.DataAccess.Data;
 using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
+using BulkyBook.Models.ViewModels;
 using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,27 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         public IActionResult Index()
         {
            return View();
+        }
+
+        public IActionResult RoleManagment(string userId)
+        {
+            string RoleId = _db.UserRoles.FirstOrDefault(u=> u.UserId == userId).RoleId;
+            RoleManagmentVM RoleVM = new RoleManagmentVM()
+            {
+                ApplicationUser = _db.ApplicationUsers.Include(u => u.Company).FirstOrDefault(u => u.Id == userId),
+                RoleList = _db.Roles.Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Name
+                }),
+                CompanyList = _db.Companies.Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                })
+            };
+
+            return View();
         }
        
         #region API CALLS
@@ -50,10 +72,25 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             return Json(new { data = objUserList });
         }
 
-        [HttpDelete]
-        public IActionResult Delete(int? id)
+        [HttpPost]
+        public IActionResult LockUnlock([FromBody]string id)
         {
-            return Json(new { success = true, message = "Delete Successful." });
+            var objFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.Id == id);
+            if(objFromDb == null)
+            {
+                return Json(new { success = false, message = "Error while Locking/Unlocking" });
+            }
+            if (objFromDb.LockoutEnd != null && objFromDb.LockoutEnd > DateTime.Now)
+            { 
+                //User is currently locked and we need to unlock the
+                objFromDb.LockoutEnd = DateTime.Now;
+            }
+            else
+            {
+                objFromDb.LockoutEnd = DateTime.Now.AddYears(100);
+            }
+            _db.SaveChanges();
+            return Json(new { success = true, message = "Operation Successful." });
         }
         #endregion
     }
